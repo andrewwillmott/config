@@ -1,0 +1,556 @@
+//
+// Material definitions
+//
+{
+    default:
+    {
+        default:
+        {
+            depth_test: "less",
+            depth: true,
+            cull: "back",
+
+            vs: "lit_vs",
+            fs: "lit_fs",
+        },
+
+        // components
+        albedo:
+        {
+            template: "default",
+            vs: "unlit_vs",
+            fs: "unlit_fs",
+        },
+
+        positions:
+        {
+            template: "default",
+            vs: "show_position_vs",
+            fs: "show_position_fs",
+        },
+
+        depths:
+        {
+            template: "default",
+            vs: "show_depth_vs",
+            fs: "show_depth_fs",
+        },
+
+        normals:
+        {
+            template: "default",
+            vs: "show_normal_vs",
+            fs: "show_normal_fs",
+        },
+
+        tangents:
+        {
+            template: "default",
+            vs: "show_tangent_vs",
+            fs: "show_tangent_fs",
+        },
+
+        uvs:
+        {
+            template: "default",
+            vs: "show_uvs_vs",
+            fs: "show_uvs_fs",
+        },
+
+        normal_map:
+        {
+            template: "default",
+            vs: "show_normal_vs",
+            fs: "show_normal_map_fs",
+        },
+
+        orm:
+        {
+            template: "default",
+            vs: "unlit_vs",
+            fs: "show_orm_fs",
+        },
+
+        occlusion:
+        {
+            template: "default",
+            vs: "unlit_vs",
+            fs: "show_occlusion_fs",
+        },
+
+        roughness:
+        {
+            template: "default",
+            vs: "unlit_vs",
+            fs: "show_roughness_fs",
+        },
+
+        metal:
+        {
+            template: "default",
+            vs: "unlit_vs",
+            fs: "show_metal_fs",
+        },
+
+        points:  // This is the default method, not the material!
+        {
+            vs: "unlit_vs",
+            fs: "unlit_fs",
+            primitive: "points",
+            point_size: 2
+        },
+
+        wireframe:
+        {
+            template: "albedo",
+            wireframe: true
+        },
+
+        uv_chart:
+        {
+            template: "albedo"  // TODO: maybe an invalid material shader?
+        },
+
+        // Default textures in case not specified. Currently created by renderer.
+        textures:
+        {
+            albedo:   { texture: "defaultAlbedo"   },
+            normal:   { texture: "defaultNormal"   },
+            orm:      { texture: "defaultORM"      },
+            emissive: { texture: "defaultEmissive" },
+        }
+    },
+
+    // No lighting
+
+    unlit:
+    {
+        template: "default",
+        default:
+        {
+            vs: "unlit_vs",
+            fs: "unlit_fs",
+        },
+    },
+
+    unlit_vertex_colour:
+    {
+        template: "default",
+        default:
+        {
+            vs: "unlit_vc_vs",
+            fs: "unlit_vc_fs",
+        },
+    },
+
+    unlit_cubemap:
+    {
+        template: "default",
+        default:
+        {
+            vs: "unlit_cubemap_vs",
+            fs: "unlit_cubemap_fs",
+            cull: "none",
+        },
+    },
+
+
+    //
+    // Standard material set:
+    //  lit
+    //  lit_alpha_blend
+    //  lit_alpha_test
+    //  lit_vertex_colour
+
+    lit:
+    {
+        template: "default",
+
+        default:
+        {
+            vs: "lit_vs",
+            fs: "lit_fs",
+        },
+
+        uv_chart:
+        {
+            template: "default",
+            vs: "lit_uv_chart_vs",
+        }
+    },
+
+    lit_alpha_blend:
+    {
+        template: "lit",
+
+        default:
+        {
+            depth: false,
+            source: "source_alpha",
+            dest: "inv_source_alpha",
+        },
+    },
+
+    lit_alpha_test:
+    {
+        template: "lit",
+
+        default:
+        {
+            fs: "lit_mask_fs",
+
+            alpha_ref: 127,
+            depth: true,
+            cull: "none",
+
+            blend_independent: true,  // only blend colour MRT
+            source: "source_alpha",
+            dest: "inv_source_alpha",
+        },
+
+        albedo:
+        {
+            fs: "unlit_mask_fs",
+        },
+    },
+
+    lit_vertex_colour:
+    {
+        template: "lit",
+
+        default:
+        {
+            vs: "lit_vc_vs",
+            fs: "lit_vc_fs",
+        },
+
+        uv_chart:
+        {
+            fs: "lit_fs",
+        }
+    },
+
+    lit_instanced:
+    {
+        template: "lit_vertex_colour",
+
+        default:
+        {
+            vs: "lit_instanced_vs",
+            fs: "lit_vc_fs",
+        },
+    },
+
+
+    //
+    // HDR environment
+    //
+
+    environment:
+    {
+        default:
+        {
+            vs: "screen_quad_vs",
+            fs: "environment_quad_fs",
+
+            depth_test: "less_equal",  // Buffer will already be cleared to 1
+            depth: false,
+            cull: "back",
+        },
+
+        albedo:
+        {
+            template: "default",
+            cull: "front",
+            rgb: false,
+            alpha: false
+        },
+    },
+
+    //
+    // Procedural sky
+    //
+
+    sky:
+    {
+        default:
+        {
+            vs: "screen_quad_vs",
+            fs: "sky_fs",
+
+            depth_test: "less_equal",  // Buffer will already be cleared to 1
+            depth: false,
+            cull: "back",
+        },
+
+        albedo:
+        {
+            template: "default",
+            cull: "front",
+            rgb: false,
+            alpha: false
+        },
+    },
+
+
+    //
+    // Pipelines
+    //
+
+    quad_copy:
+    {
+        vs: "quad_vs",
+        fs: "quad_fs",
+
+        depth: false,
+        depth_test: "none",
+        cull: "none",
+    },
+
+    quad_blend:
+    {
+        template: "quad_copy",
+
+        source: "source_alpha",
+        dest: "inv_source_alpha",
+    },
+
+    blur_demo:
+    {
+        template: "quad_copy",
+        fs: "blur_demo_fs",
+    },
+
+    //
+    // Draw support
+    //
+    // Note: Draw system is pre-multiplied alpha
+
+    draw_tris_2d:
+    {
+        vs: "debug_draw_lines_vs",
+        fs: "debug_draw_lines_fs",
+
+        depth: false,
+        depth_test: "none",
+        cull: "none",
+        source: "one",
+        dest: "inv_source_alpha",
+    },
+
+    draw_lines_2d:
+    {
+        vs: "debug_draw_lines_vs",
+        fs: "debug_draw_lines_fs",
+
+        depth: false,
+        depth_test: "none",
+        cull: "none",
+        source: "one",
+        dest: "inv_source_alpha",
+
+        primitive: "lines",
+        line_aa: true,
+    },
+
+    draw_text_2d:
+    {
+        vs: "debug_draw_text_vs",
+        fs: "debug_draw_text_fs",
+
+        depth: false,
+        depth_test: "none",
+        cull: "none",
+        source: "one",
+        dest: "inv_source_alpha",
+    },
+
+    draw_tris_3d:
+    {
+        vs: "debug_draw_lines_vs",
+        fs: "debug_draw_lines_fs",
+
+        depth: true,
+        depth_test: "less_equal",
+        cull: "none",
+        source: "one",
+        dest: "inv_source_alpha",
+    },
+
+    draw_lines_3d:
+    {
+        vs: "debug_draw_lines_vs",
+        fs: "debug_draw_lines_fs",
+
+        depth: true,
+        depth_test: "less_equal",
+        source: "one",
+        dest: "inv_source_alpha",
+
+        primitive: "lines",
+    },
+
+    draw_text_3d:
+    {
+        template: "draw_text_2d"
+    },
+
+
+
+    // ImGui rendering
+    imgui:
+    {
+        vs: "imgui_vs",
+        fs: "imgui_fs",
+
+        depth: false,
+        depth_test: "none",
+        cull: "none",
+        source: "source_alpha",
+        dest: "inv_source_alpha",
+
+        useDefaultForAllMethods: true
+    },
+
+    imgui_array_texture:
+    {
+        template: "imgui",
+        vs: "imgui_vs",
+        fs: "imgui_array_fs",
+    },
+
+    imgui_cubemap_texture:
+    {
+        template: "imgui",
+        vs: "imgui_vs",
+        fs: "imgui_cubemap_fs",
+    },
+
+    points:
+    {
+        vs: "unlit_vc_vs",
+        fs: "unlit_vc_fs",
+
+        primitive: "points",
+        point_size: 2,
+
+        depth: true,
+        depth_test: "less_equal",
+        source: "one",
+        dest: "inv_source_alpha",
+    },
+
+    splats:
+    {
+        vs: "splats_vs",
+        fs: "splats_fs",
+
+        primitive: "points",
+        point_size: 2,
+
+        depth: false,
+        depth_test: "less_equal",
+        source: "one",
+        dest: "inv_source_alpha",
+    },
+
+    splatInstances:
+    {
+        vs: "splats_instanced_vs",
+        fs: "splats_instanced_fs",
+
+        primitive: "triangle_strip",
+
+        depth: false,
+        depth_test: "less",
+        source: "one",
+        dest: "inv_source_alpha",
+        cull: "back",
+    },
+
+    sh:
+    {
+        template: "default",
+        default:
+        {
+            vs: "sh_vs",
+            fs: "sh_fs",
+        },
+    },
+
+    sh_diff:
+    {
+        template: "default",
+        default:
+        {
+            vs: "sh_vs",
+            fs: "sh_diff_fs",
+        },
+    },
+
+    zh_rot:
+    {
+        template: "default",
+        default:
+        {
+            vs: "lit_vs",
+            fs: "zh_rot_fs",
+        },
+    },
+
+    sh_rot:
+    {
+        template: "default",
+        default:
+        {
+            vs: "lit_vs",
+            fs: "sh_rot_fs",
+        },
+    },
+
+    sh_16:
+    {
+       template: "default",
+        default:
+        {
+            vs: "lit_vs",
+            fs: "sh_16_fs",
+        },
+    },
+
+    sh_16_no_gamma:
+    {
+       template: "default",
+        default:
+        {
+            vs: "lit_vs",
+            fs: "sh_16_no_gamma_fs",
+        },
+    },
+
+    particles:
+    {
+        vs: "particles_vs",
+        fs: "particles_fs",
+
+        depth: false,
+        depth_test: "less",
+        cull: "none",
+
+        source: "source_alpha",
+        dest: "inv_source_alpha",
+
+        textures:
+        {
+            albedo: { texture: "defaultAlbedo", address: "clamp" }
+        }
+    },
+
+    particlesAdd:
+    {
+        template: "particles",
+
+        source: "source_alpha",
+        dest: "one",
+    },
+}

@@ -1,0 +1,15 @@
+{
+    import: "renderer_base.json",
+
+    uniforms:
+    {
+        // Splats
+        splatControl: [0, 0, 0, 0],
+    },
+
+    samplers:
+    {
+        splatGeoData   : { stage: 4, texture: "defaultAlbedo" },
+        splatSHData    : { stage: 5, texture: "defaultAlbedo" },
+    }
+}

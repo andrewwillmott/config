@@ -1,0 +1,4 @@
+config_tool*
+test_core
+*.o
+*.a

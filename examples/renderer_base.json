@@ -1,0 +1,93 @@
+//
+// Renderer Configuration
+//
+{
+    // global settings
+    vsync: true,
+    msaa: 2,  // 2^n = 4x
+    srgb: false,
+
+    uniforms:
+    {
+        // Material
+        albedo   : [0.5, 0.5, 0.5, 1],
+        orm      : [0, 1, 0, 1],
+        emissive : 0,
+
+        // Deformations
+        skinTransforms: [],
+        morphChannels: [],
+
+        // ToneMap
+        exposure : 1,
+
+        // UI
+        time   : { type: "vec4", default: [0, 0, 0, 0] },  // [time, frac(time), delta_time, 0]
+        mouse  : { type: "vec4", default: [0, 0, 0, 0] },  // xy = world pos in pixels, z = mouse button, w = drag distance
+        sliders: { type: "vec4", default: [0, 0, 0, 0] },  // Use Renderer > Sliders ... to modify
+
+        // SH
+        shCoeffs:  { type: "vec4", count: 25, default: [[1, 1, 1, 1]] },
+
+        // Hosek sky model
+        sunColour    : [2, 1.8, 1.5, 1],
+        sunDirection : [0.57735, 0.57735, 0.57735, 1],
+        skyColour    : { type: "vec4", default: [0.3, 0.6, 1.2, 1] },
+        skyInfo      : [[1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
+        groundColour : [0.4, 0.5, 0.3, 1],
+    },
+
+    textures:
+    {
+        dfg: "dfg",
+        proc_test: { hue: "orange", saturation: 0.5 },
+    },
+
+    samplers:
+    {
+        // Stages needed for DX and Metal
+        albedo         : { stage: 0, texture: "defaultAlbedo" },
+        normal         : { stage: 1, texture: "defaultNormal" },
+        orm            : { stage: 2, texture: "defaultORM" },
+        emissive       : { stage: 3, texture: "defaultEmissive" },
+        environment    : { stage: 11, texture: "defaultEnvironment" },
+
+        dfg            : { stage: 8, texture: "dfg", address: "clamp" },
+        sky            : { stage: 9, address: "clamp" },
+        skyBRDFTable   : { stage: 10, address: "clamp", mipFilter: "point" },
+        tone_map_lut   : { stage: 11, address: "clamp", mipFilter: "point" },
+
+        noise          : { stage: 15, texture: "noise" },
+    },
+
+
+    methods:
+    [
+        "default",
+
+        "albedo",        // straight material/texture albedo
+
+        "positions",     // world positions
+        "depths",        // camera depth
+        "normals",       // vertex normals
+
+        "tangents",      // vertex tangents
+        "uvs",           // first uv set
+        "normal_map",    // normal mapped surfaces
+
+        "orm",           // occlusion/roughness/metallic as RGB
+        "occlusion",
+        "roughness",
+        "metal",
+
+        "boneIndices",
+        "morphIndices",
+
+        "wireframe",
+        "uv_chart",
+    ],
+
+    materials: { import: "materials.json" },
+
+    pipelines: { import: "pipelines.json" },
+}

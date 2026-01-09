@@ -1,0 +1,29 @@
+{
+    textures: true,
+    background_load: true,
+    culling: true,
+    frustum_plane_offset: 0.0,
+
+    models:
+    {
+        "sphere" :
+        {
+            lod_distances: [40, 120, 320],
+            //lod_distances: [200, 160, 80],
+            // Set from code...
+            //lod0: "sphere_32",
+            //lod1: "sphere_16",
+            //lod2: "sphere_8",
+        },
+
+        "bunny":
+        {
+            mesh: "bunny.obj",
+            coord_sys: "LUF",
+        },
+        "orb":
+        {
+            mesh: "orb.obj"
+        },
+    }
+}

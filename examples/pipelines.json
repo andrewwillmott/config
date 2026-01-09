@@ -1,0 +1,237 @@
+//
+// Pipeline definitions.
+//
+
+{
+    backbuffer:
+    {
+        // Basically what you'd get without a pipeline -- render direct to backbuffer, clear is up to the main app loop.
+        passes:
+        [
+            {
+                name: "main",
+                fb: "backbuffer",
+            },
+        ]
+    },
+
+    default:
+    {
+        // Basically what you'd get without a pipeline -- render direct to backbuffer, clear is up
+        // to the main app loop.
+        passes:
+        [
+            {
+                name: "main",
+                fb: "backbuffer",
+            },
+        ]
+    },
+
+    // Classic render to RT then optionally blit to backbuffer
+    forward:
+    {
+        rts:
+        {
+            colour: { format: "RGBA8" },
+            depth:  { format: "D24S8", flags: { write_only: true } },
+        },
+        fbs:
+        {
+            main:  { attachments: ["colour", "depth" ] },
+        },
+        passes:
+        [
+            {
+                name: "main",
+                fb: "main",
+                clear: [0, 0, 0, 0], // [0.5, 0.5, 0.6, 0.0],
+                clear_depth: 1.0,
+            },
+            {
+                name: "draw",
+                fb: "main",
+            },
+            {
+                name: "display",
+                enabled: false,
+                fb: "backbuffer",
+                samplers: { albedo: "colour" },
+                screen_quad: "quad_blend",
+            },
+        ]
+    },
+
+    pbr_capture:
+    {
+        rts:
+        {
+            albedo: { format: "RGBA8" },
+            normal: { format: "RGBA8" },
+            orm   : { format: "RGBA8" },
+        },
+
+        fbs:
+        {
+            albedo:  { attachments: ["albedo" ] },
+            normal:  { attachments: ["normal" ] },
+            orm   :  { attachments: ["orm"    ] },
+        },
+        passes:
+        [
+            {
+                name: "albedo",
+                fb: "albedo",
+                method: "albedo",
+                clear: [1, 0, 1, 1],
+            },
+            {
+                name: "normal",
+                fb: "normal",
+                method: "normal_map",
+                clear: [0, 1, 0, 1],
+            },
+            {
+                name: "orm",
+                fb: "orm",
+                method: "orm",
+                clear: [1, 1, 0, 1],
+            }
+        ]
+    },
+
+    test:
+    {
+        msaa: 0,
+        rts:
+        {
+            colour_explicit: { format: "RGBA8", size: [1024, 768] },
+            depth_explicit:  { format: "D32", size: [1024, 768], flags: { write_only: false } },
+
+            colour_ratio:    { format: "RGBA8", ratio: "eighth" },
+            depth_ratio:     { format: "D32", ratio: "eighth", flags: { write_only: true } },
+        },
+        fbs:
+        {
+            main:  { attachments: ["colour_explicit", "depth_explicit" ] },
+            ratio: { attachments: ["colour_ratio", "depth_ratio" ] },
+
+            mismatch_test: { attachments: ["colour_ratio", "depth_explicit" ] },
+        },
+        passes:
+        [
+            {
+                name: "main",
+                fb: "main",
+                clear: [0.3, 0.9, 0.1, 1.0],
+                clear_depth: 1.0,
+            },
+            {
+                name: "copy_ratio",
+                samplers: { albedo: "colour_explicit" },
+                fb: "ratio",
+                screen_quad: "quad_copy",
+            },
+            {
+                name: "display",
+                fb: "backbuffer",
+                samplers: { albedo: "colour_explicit" },
+                screen_quad: "quad_copy",
+            },
+            {
+                name: "display_ratio",
+                enabled: false,
+                fb: "backbuffer",
+                samplers: { albedo: "colour_ratio" },
+                screen_quad: "quad_copy",
+            },
+            {
+                name: "demo",
+                enabled: false,
+                fb: "backbuffer",
+                screen_quad: "blur_demo",
+            },
+        ]
+    },
+
+    hdr_scene:
+    {
+        rts:
+        {
+            fb_0 : { format: "RGBA8", ratio: "one" },
+
+            lum_0: { format: "RGBA8", size: 128 },
+            lum_1: { format: "RGBA8", size:  64 },
+            lum_2: { format: "RGBA8", size:  16 },
+            lum_3: { format: "RGBA8", size:   4 },
+            lum_4: { format: "RGBA8", size:   1 },
+
+            bright: { format: "RGBA8", ratio: "half" },
+            blur  : { format: "RGBA8", ratio: "eight" },
+        },
+
+        passes:
+        [
+            {
+                name: "Skybox",
+                clear: [0.2, 0.2, 0.2, 1.0],
+                clear_depth: 0,
+                fb: "backbuffer",
+            },
+            {
+                name: "Mesh",
+                // clear: BGFX_CLEAR_DISCARD_DEPTH | BGFX_CLEAR_DISCARD_STENCIL);
+                fb: "backbuffer",
+            },
+            {
+                name: "Luminance",
+                screen_quad: "lum_average",
+                fb: "lum_0",
+            },
+            {
+                name: "Downscale luminance 0",
+                samplers: { albedo: "lum_0" },
+                screen_quad: "lum_average",
+                fb: "lum_1",
+            },
+            {
+                name: "Downscale luminance 1",
+                samplers: { albedo: "lum_1" },
+                screen_quad: "lum_average",
+                fb: "lum_2",
+            },
+            {
+                name: "Downscale luminance 2",
+                screen_quad: "lum_average",
+                fb: "lum_3",
+            },
+            {
+                name: "Downscale luminance 3",
+                screen_quad: "lum_average",
+                fb: "lum_4",
+            },
+            {
+                name: "Brightness",
+                // bgfx::setUniform(uTonemap, tonemap);
+                samplers: { albedo: "fb_0", emittance: "lum_4" },
+
+                screen_quad: "bright",
+                fb: "bright",
+            },
+            {
+                name: "Blur vertical",
+                //    bgfx::setUniform(uTonemap, tonemap);
+                //    bgfx::setTexture(0, sTexColour, bgfx::getTexture(mBright) );
+                samplers: { albedo: "bright" },
+                screen_quad: "blur",
+                fb: "blur",
+            },
+            {
+                name: "Blur horizontal + tonemap",
+                samplers: { albedo: "fb_0", emissive: "lum_4", environment: "blur" },
+                screen_quad: "blur_and_tonemap",
+                fb: "backbuffer",
+            },
+        ]
+    },
+}
