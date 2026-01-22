@@ -616,7 +616,7 @@ bool JsonReader::DecodeDouble(Token& token)
     int count;
     int length = int(token.mEnd - token.mStart);
 
-    if (length <= bufferSize)
+    if (length < bufferSize)
     {
         char buffer[bufferSize];
         memcpy(buffer, token.mStart, length);
@@ -1496,7 +1496,7 @@ bool HL::LoadJsonFile(FILE* file, Value* value, String* errors, StringTable* st)
     String text;
     text.resize(fileSize);
 
-    if (fread((char*) text.data(), 1, fileSize, file) != fileSize)
+    if (fread((char*) text.data(), 1, fileSize, file) != (size_t) fileSize)
     {
         if (errors)
             *errors += "Couldn't read file data\n";

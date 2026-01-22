@@ -22,6 +22,7 @@ namespace HL
         String(const std::string& s) : std::string(s) {}  // constructor inheritance above doesn't work -- templating?
 
         void operator =(const std::string& s) { std::string::operator=(s); }
+        void operator =(const char* s) { std::string::operator=(s); }
         operator const char*() const { return c_str(); }
     };
     typedef std::vector<String> Strings;

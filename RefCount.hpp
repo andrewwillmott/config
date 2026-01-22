@@ -11,9 +11,9 @@
 
 #include "Defs.hpp"
 
-#if defined(HL_WINDOWS) || defined(HL_NO_C11_ATOMIC)
+#if defined(HL_WINDOWS) || defined(__GNUC__) || defined(HL_NO_C11_ATOMIC)
     // We prefer _Atomic if possible as <atomic> is 5500+ lines of include
-    #include <atomic>  // VSC hasn't implemented _Atomic
+    #include <atomic>  // MVSC hasn't implemented _Atomic, g++ seems to now exclude it
     #ifndef _Atomic
         #define _Atomic(TYPE) std::atomic<TYPE>
     #endif

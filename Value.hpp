@@ -16,6 +16,7 @@
 #include "vector_map.hpp"
 
 #include <stdint.h>
+#include <string.h>
 
 namespace HL
 {
@@ -282,7 +283,7 @@ namespace HL
     class StringValue : public ValueRC  // Represents a fixed-size UTF8 string
     {
     public:
-        const char data[1];
+        const char data[1] = {};
 
         operator const char*() const { return data; }
 

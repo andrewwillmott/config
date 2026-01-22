@@ -27,7 +27,7 @@ int HL::VFormat(String* s, const char* format, va_list args)
 
     if (length <= 0)
         s->clear();
-    else if (length < HL_SIZE(bufferStack))      // length does not include terminator, so <
+    else if (length < int(HL_SIZE(bufferStack)))      // length does not include terminator, so <
         s->assign(bufferStack);
     else
     {

@@ -7,6 +7,7 @@
 //
 
 #define _CRT_SECURE_NO_WARNINGS
+#define _ISOC99_SOURCE
 
 #include "ValueYaml.hpp"
 
@@ -22,6 +23,7 @@
 #endif
 
 #include "external/yaml.h"
+#include <math.h>
 
 using namespace HL;
 

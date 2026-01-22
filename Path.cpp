@@ -14,6 +14,7 @@
 #else
     #include <fcntl.h>
     #include <dirent.h>
+    #include <string.h>
     #include <unistd.h>
     #include <sys/stat.h>
 #endif
@@ -99,14 +100,14 @@ bool HL::PathHasExtension(const char* path, const char* extension)
 
 bool HL::PathHasExtensions(const char* path, const char* const extensions[])
 {
-    int pl = strlen(path);
+    size_t pl = strlen(path);
     bool hasExtension;
 
     while (extensions[0])
     {
         const char* extension = extensions[0];
 
-        int el = strlen(extension);
+        size_t el = strlen(extension);
 
         if (extension[0] == '.')
             hasExtension = ((pl >= el) && EqualI(path + pl - el, extension));

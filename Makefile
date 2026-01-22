@@ -27,13 +27,13 @@ libconfigd.a: $(LIB_DOBJS)
 	$(AR) rcs $@ $^
 
 config_tool: $(LIB_DEPS) libconfig.a tool/ConfigTool.cpp tool/ArgSpec.h
-	$(CXX) $(CXXFLAGS) -o $@ -I. -L. -lconfig tool/ConfigTool.cpp
+	$(CXX) $(CXXFLAGS) $(OPTS) -o $@ -I. tool/ConfigTool.cpp -L. -lconfig
 
 config_tool_debug: $(LIB_DEPS) libconfigd.a tool/ConfigTool.cpp tool/ArgSpec.h
-	$(CXX) $(CXXFLAGS) -o $@ -I. -L. -lconfigd tool/ConfigTool.cpp
+	$(CXX) $(CXXFLAGS) $(DBG_OPTS) -o $@ -I. tool/ConfigTool.cpp -L. -lconfigd
 
 test_core: $(wildcard Value.*) $(wildcard ValueJson.*) String.hpp tool/TestCore.cpp
-	$(CXX) $(CXXFLAGS) -o $@ -I. -DHL_NO_STRING_TABLE Value.cpp ValueJson.cpp tool/TestCore.cpp
+	$(CXX) $(CXXFLAGS) $(OPTS) -o $@ -I. -DHL_NO_STRING_TABLE Value.cpp ValueJson.cpp tool/TestCore.cpp
 
 # Rules
 
@@ -71,7 +71,7 @@ install: libconfig.a libconfigd.a config_tool
 	cp config_tool $(BIN_DIR)
 
 test_install:
-	$(CXX) $(CXXFLAGS) -o $@ -I$(INCLUDE_DIR) -L$(LIB_DIR) -lconfig tool/ConfigTool.cpp
+	$(CXX) $(CXXFLAGS) $(OPTS) -o $@ -I$(INCLUDE_DIR) -L$(LIB_DIR) tool/ConfigTool.cpp -lconfig
 
 clean:
 	$(RM) -rf config_tool* test_core *.o *.a *.dSYM */*.o */*.dSYM
