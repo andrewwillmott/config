@@ -532,9 +532,6 @@ bool JsonReader::ReadArray(Token& tokenStart)
 
         if (token.mType != kTokenArraySeparator)
             return AddErrorAndRecover("Expecting ',' in array declaration", token, kTokenArrayEnd);
-
-        if (token.mType == kTokenArrayEnd)
-            break;
     }
 
     *mNodes.back() = array;
@@ -590,7 +587,7 @@ bool JsonReader::DecodeNumber(Token& token)
     if (isNegative)
     {
         if (value <= 2147483648)  // -INT32_MIN
-        *mNodes.back() = -int32_t(value);
+            *mNodes.back() = -int32_t(value);
         else if (value <= 9223372036854775808u) // -INT64_MIN
             *mNodes.back() = -int64_t(value);
         else
@@ -934,7 +931,6 @@ namespace
         if (!IsStartTokenChar(*name))
             return false;
 
-        name++;
         while (*++name != 0)
             if (!IsTokenChar(*name))
                 return false;

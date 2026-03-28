@@ -547,10 +547,10 @@ size_t Value::size() const
     switch (mType)
     {
     case kValueString:
-        return mValue.mString ? int(mValue.mString->size()) : 0;
+        return mValue.mString ? mValue.mString->size() : 0;
 
     case kValueArray:
-        return mValue.mArray ? int(mValue.mArray->size()) : 0;
+        return mValue.mArray ? mValue.mArray->size() : 0;
 
     case kValueObject:
         return mValue.mObject->NumMembers();
@@ -1037,8 +1037,6 @@ Value* ObjectValue::UpdateMemberPtr(ValueKey key)
 void ObjectValue::SetMember(ValueKey key, const Value& v)
 {
     UpdateMember(key) = v;
-
-    mModCount++;
 }
 
 bool ObjectValue::RemoveMember(ValueKey key)

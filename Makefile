@@ -26,11 +26,11 @@ libconfig.a: $(LIB_OBJS)
 libconfigd.a: $(LIB_DOBJS)
 	$(AR) rcs $@ $^
 
-config_tool: $(LIB_DEPS) libconfig.a tool/ConfigTool.cpp tool/ArgSpec.h
-	$(CXX) $(CXXFLAGS) $(OPTS) -o $@ -I. tool/ConfigTool.cpp -L. -lconfig
+config_tool: $(LIB_DEPS) libconfig.a tool/ConfigTool.cpp tool/ArgSpec.hpp tool/ArgSpec.cpp
+	$(CXX) $(CXXFLAGS) $(OPTS) -o $@ -I. tool/ArgSpec.cpp tool/ConfigTool.cpp -L. -lconfig
 
-config_tool_debug: $(LIB_DEPS) libconfigd.a tool/ConfigTool.cpp tool/ArgSpec.h
-	$(CXX) $(CXXFLAGS) $(DBG_OPTS) -o $@ -I. tool/ConfigTool.cpp -L. -lconfigd
+config_tool_debug: $(LIB_DEPS) libconfigd.a tool/ConfigTool.cpp tool/ArgSpec.hpp tool/ArgSpec.cpp
+	$(CXX) $(CXXFLAGS) $(DBG_OPTS) -o $@ -I. tool/ArgSpec.cpp tool/ConfigTool.cpp -L. -lconfigd
 
 test_core: $(wildcard Value.*) $(wildcard ValueJson.*) String.hpp tool/TestCore.cpp
 	$(CXX) $(CXXFLAGS) $(OPTS) -o $@ -I. -DHL_NO_STRING_TABLE Value.cpp ValueJson.cpp tool/TestCore.cpp

@@ -111,7 +111,7 @@ void StringTable::Flush()
     for (auto it = self->mStrings.begin(); it != self->mStrings.end(); )
     {
         if ((*it)->RefCount() == 1)
-            self->mStrings.erase(it++);
+            it = self->mStrings.erase(it);
         else
             ++it;
     }

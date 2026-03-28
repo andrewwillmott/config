@@ -75,8 +75,9 @@ String HL::PathLocation(const char* path)
 String HL::PathWithSuffix(const char* path, const char* suffix)
 {
     const char* lastDot = strrchr(path, '.');
+    const char* lastSep = strrchr(path, kDirectorySeparator);
 
-    if (lastDot)
+    if (lastDot && (!lastSep || lastDot > lastSep))
     {
         String result(path, lastDot - path);
         result += suffix;
@@ -92,7 +93,9 @@ String HL::PathWithSuffix(const char* path, const char* suffix)
 bool HL::PathHasExtension(const char* path, const char* extension)
 {
     const char* lastDot = strrchr(path, '.');
-    if (lastDot)
+    const char* lastSep = strrchr(path, kDirectorySeparator);
+
+    if (lastDot && (!lastSep || lastDot > lastSep))
         return HL::EqualI(lastDot, extension);
 
     return false;

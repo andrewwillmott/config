@@ -8,7 +8,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "ArgSpec.h"
+#include "ArgSpec.hpp"
 
 #include "Config.hpp"
 #include "Value.hpp"
@@ -27,30 +27,6 @@ using namespace AS;
 
 namespace
 {
-    bool ReadText(const char* path, String* text)
-    {
-        FILE* file = fopen(path, "r");
-
-        if (!file)
-            return false;
-
-        size_t fileSize = 0;
-
-        if (fseek(file, 0, SEEK_END) == 0)
-            fileSize = ftell(file);
-
-        if (fseek(file, 0, SEEK_SET) != 0)
-            fileSize = 0;
-
-        text->resize(fileSize);
-
-        if (fread((char*) text->data(), 1, fileSize, file) != fileSize)
-            text->clear();
-
-        fclose(file);
-        return !text->empty();
-    }
-
     enum ResultCodes : int
     {
         kResultOK               =  0,
@@ -192,9 +168,6 @@ int main(int argc, const char* argv[])
 
         if (size_i(inputPaths) > 1)
             HL_LOG_I(Console, "%s:\n", inputPath);
-
-        String text;
-        ReadText(inputPath, &text);
 
         if (LoadConfig(inputPath, &config, &errors, &configInfo))
         {

@@ -681,7 +681,7 @@ namespace HL
 
     inline const ArrayValue& Value::AsArray() const
     {
-        if (mType == kValueArray)
+        if (mType == kValueArray && mValue.mArray)
             return *mValue.mArray;
 
         return kNullArrayValue;
